@@ -1,5 +1,6 @@
 //##################################################################################################
 /*
+ * (FILE NAME is 8.3 format = max 12 chars)
 */
 //##################################################################################################
 //= INCLUDES =======================================================================================
@@ -7,18 +8,17 @@
 #include <SD.h>
 
 //= CONSTANTS ======================================================================================
-const int LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
-
-const int SD_CHIP_SELECT = 4;
-
-// file name to use for writing
-const char DATA_FILENAME[] = "measurements.txt";
-
+const int LED_INDICATOR_PIN = LED_BUILTIN; // choose the pin for the LED
+//
+const int SD_CHIP_SELECT = 10;
+//
+const char DATA_FILENAME[] = "/raw_data.txt";
+//
 const unsigned long TEN_SEC = 10000;
 
 //= VARIABLES ======================================================================================
 // string to buffer output
-String dataFileBuffer;
+volatile String dataFileBuffer;
 //
 volatile int iteration = 0;
 
@@ -38,13 +38,14 @@ void setup() {
 void loop() {
   iteration += 1;
   //
-  dataFileBuffer = iteration;
+  dataFileBuffer += iteration;
   dataFileBuffer += ",";
-  dataFileBuffer += (iteration*2);
+  dataFileBuffer += millis();
   dataFileBuffer += ",";
-  dataFileBuffer += (iteration*4);
-  //
-  Serial.println(dataFileBuffer);
+  dataFileBuffer += (iteration * 2);
+  dataFileBuffer += ",";
+  dataFileBuffer += (iteration * 4);
+  dataFileBuffer += "\n";
   //
   writeBufferToFile(&dataFileBuffer);
   //
@@ -58,29 +59,27 @@ void setupSdDataFile() {
   dataFileBuffer.reserve(1024);
   // init the SD card
   if (!SD.begin(SD_CHIP_SELECT)) {
-    Serial.println("Card failed, or not present");
+    Serial.println("SD-Card:SETUP: Card failed, or not present");
     while (1); // don't do anything more
   }
-
+  //
   Serial.println("SD-Card:SETUP: initialized.");
-
   // start with an empty file
-  // SD.remove(DATA_FILENAME);
-
-  digitalWrite(LED_INDICATOR_PIN, HIGH);
-  digitalWrite(LED_INDICATOR_PIN, LOW);
+  SD.remove(DATA_FILENAME);
 }
 //==================================================================================================
 void writeBufferToFile(String *fileBuffer) {
   digitalWrite(LED_INDICATOR_PIN, HIGH);
+  //
+  Serial.print((*fileBuffer));
   // only one file can be open at a time
   File dataFile = SD.open(DATA_FILENAME, FILE_WRITE);
   //
   if (dataFile) {
-    dataFile.println((*fileBuffer));
+    dataFile.print((*fileBuffer));
     dataFile.close();
-    // print to the serial port too:
-    Serial.println((*fileBuffer));
+    // remove written data from buffer
+    (*fileBuffer).remove(0);
   } else {
     Serial.print("SD-Card:WRITE: error opening file ");
     Serial.println(DATA_FILENAME);

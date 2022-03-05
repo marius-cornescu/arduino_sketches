@@ -17,10 +17,8 @@ const char DATA_FILENAME[] = "measurements.txt";
 const unsigned long TEN_SEC = 10000;
 
 //= VARIABLES ======================================================================================
-// File object to represent file
-File sdDataFile;
 // string to buffer output
-volatile String dataFileBuffer;
+String dataFileBuffer;
 //
 volatile int iteration = 0;
 
@@ -38,12 +36,15 @@ void setup() {
 }
 //==================================================================================================
 void loop() {
+  iteration += 1;
   //
   dataFileBuffer = iteration;
   dataFileBuffer += ",";
   dataFileBuffer += (iteration*2);
   dataFileBuffer += ",";
   dataFileBuffer += (iteration*4);
+  //
+  Serial.println(dataFileBuffer);
   //
   writeBufferToFile(&dataFileBuffer);
   //
@@ -67,14 +68,6 @@ void setupSdDataFile() {
   // SD.remove(DATA_FILENAME);
 
   digitalWrite(LED_INDICATOR_PIN, HIGH);
-  // try to open the file for writing
-//  sdDataFile = SD.open(DATA_FILENAME, FILE_WRITE);
-//  if (!sdDataFile) {
-//    Serial.print("SD-Card:SETUP: error opening file ");
-//    Serial.println(DATA_FILENAME);
-//    //while (1); // don't do anything more
-//  }
-
   digitalWrite(LED_INDICATOR_PIN, LOW);
 }
 //==================================================================================================
@@ -95,20 +88,5 @@ void writeBufferToFile(String *fileBuffer) {
   //
   digitalWrite(LED_INDICATOR_PIN, LOW);
 }
-//==================================================================================================
-//void writeBufferToFileNonBlock(String *fileBuffer) {
-//  // check if the SD card is available to write data without blocking
-//  // and if the buffered data is enough for the full chunk size
-//  unsigned int chunkSize = dataFile.availableForWrite();
-//  if (chunkSize && (*fileBuffer).length() >= chunkSize) {
-//    // write to file and blink LED
-//    digitalWrite(LED_INDICATOR_PIN, HIGH);
-//    dataFile.write((*fileBuffer).c_str(), chunkSize);
-//    digitalWrite(LED_INDICATOR_PIN, LOW);
-//
-//    // remove written data from buffer
-//    (*fileBuffer).remove(0, chunkSize);
-//  }
-//}
 //==================================================================================================
 //##################################################################################################

@@ -187,17 +187,11 @@ void inputDateFromSerial() {
 
 void printTheTime() {
   DateTime now = myRTC.now();
+  char timestamp[20];
+
+  //Updated now.day to now.date
+  sprintf(timestamp, "%02d/%02d/%02d %02d:%02d:%02d", now.day(), now.month(), now.year(),  now.hour(), now.minute(), now.second()); 
   
-  Serial.print(now.year(), DEC);
-  Serial.print('/');
-  Serial.print(now.month(), DEC);
-  Serial.print('/');
-  Serial.print(now.day(), DEC);
-  Serial.print(' ');
-  Serial.print(now.hour(), DEC);
-  Serial.print(':');
-  Serial.print(now.minute(), DEC);
-  Serial.print(':');
-  Serial.print(now.second(), DEC);
-  Serial.println();
+  Serial.print(F("Date/Time: "));
+  Serial.println(timestamp);
 }

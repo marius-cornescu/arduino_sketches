@@ -3,22 +3,24 @@
 
 
 //= CONSTANTS ======================================================================================
-int CALIBRATION_TIME_MS = 10;  //the time we give the sensor to calibrate (10-60 secs according to the datasheet)
-int MOTION_PIN = 8;
+int CALIBRATION_TIME_MS = 30;  //the time we give the sensor to calibrate (10-60 secs according to the datasheet)
+int MOTION_PIN = 4;
 
-int LED_INDICATOR_PIN = 2;  // choose the pin for the LED
+int LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
 
 //= VARIABLE =======================================================================================
-volatile int pirState = LOW;  // we start, assuming no motion detected
-volatile int val = 0;         // variable for reading the pin status
-
+volatile long pirStateChangeMS  = 0;   // when the state of PIR changed
+volatile int pirStateCurrent   = LOW; // current state of pin
+volatile int pirStatePrevious  = LOW; // previous state of pin
 
 //==================================================================================================
 void setup() {
+  // Open serial communications and wait for port to open:
+  Serial.begin(57600);
+  //
   pinMode(LED_INDICATOR_PIN, OUTPUT);    // declare LED as output
   pinMode(MOTION_PIN, INPUT);            // declare sensor as input
   digitalWrite(LED_INDICATOR_PIN, LOW);  //prevents gun firing at powerup
-  Serial.begin(9600);
   //give the sensor some time to calibrate
   Serial.print("# calibrating sensor ");
   for (int i = 0; i < CALIBRATION_TIME_MS; i++) {
@@ -26,28 +28,39 @@ void setup() {
     delay(1000);
   }
   Serial.println(" done #");
-  Serial.println("SENSOR ACTIVE");
   delay(50);
+  pirStateChangeMS = millis(); // init value
+  Serial.println("SENSOR ACTIVE");
 }
 //==================================================================================================
 void loop() {
-  val = digitalRead(MOTION_PIN);      // read input value
-  if (val == HIGH) {                // check if the input is HIGH
-    digitalWrite(LED_INDICATOR_PIN, HIGH);  // turn LED ON
-    if (pirState == LOW) {
-      // we have just turned on
-      Serial.println("Motion detected!");
-      // We only want to print on the output change, not state
-      pirState = HIGH;
-    }
-  } else {
-    digitalWrite(LED_INDICATOR_PIN, LOW);  // turn LED OFF
-    if (pirState == HIGH) {
-      // we have just turned of
-      Serial.println("Motion ended!");
-      // We only want to print on the output change, not state
-      pirState = LOW;
-    }
+  pirStatePrevious = pirStateCurrent;          // store old state
+  pirStateCurrent = digitalRead(MOTION_PIN);   // read new state
+  
+  if (pirStatePrevious == LOW && pirStateCurrent == HIGH) {   // pin state change: LOW -> HIGH
+    pirStateChangeMS = millis() - pirStateChangeMS; // delta
+    Serial.print("State change after [");
+    Serial.print(pirStateChangeMS);
+    Serial.print(" ms] => ");
+    //
+    Serial.println("Motion detected!");
+    //
+    digitalWrite(LED_INDICATOR_PIN, HIGH);
+    pirStateChangeMS = millis();
+    
+  } else if (pirStatePrevious == HIGH && pirStateCurrent == LOW) {   // pin state change: HIGH -> LOW
+    pirStateChangeMS = millis() - pirStateChangeMS; // delta
+    Serial.print("State change after [");
+    Serial.print(pirStateChangeMS);
+    Serial.print(" ms] => ");
+    //
+    Serial.println("Motion stopped!");
+    //
+    digitalWrite(LED_INDICATOR_PIN, LOW);
+    pirStateChangeMS = millis();
+    
   }
+  
+  delay(100);
 }
 //==================================================================================================

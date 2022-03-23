@@ -4,11 +4,11 @@
 */
 //##################################################################################################
 //= INCLUDES =======================================================================================
-#include <SD.h>
-#include <LowPower.h>
+#include <LowPower.h> // power management
 
-#include <DS3231.h>
-#include <Wire.h>
+#include <SD.h>       // SD card
+
+#include <RTClib.h>   // RT clock
 
 //= CONSTANTS ======================================================================================
 const int LED_INDICATOR_PIN = LED_BUILTIN; // choose the pin for the LED
@@ -25,22 +25,20 @@ volatile String dataFileBuffer;
 //
 volatile int iteration = 0;
 //
-RTClib myRTC;
+RTC_DS3231 rtc;
 char timestamp[20];
 
 //==================================================================================================
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(57600);
-  while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
-  }
   //
   pinMode(LED_INDICATOR_PIN, OUTPUT);    // declare LED as output
   //
+  setupRTCModule();
+  //
   setupSdDataFile();
-  // Start the I2C interface
-  Wire.begin();
+  //
 }
 //==================================================================================================
 void loop() {
@@ -61,6 +59,20 @@ void loop() {
   //
   LowPower.idle(SLEEP_10S, ADC_OFF, TIMER2_OFF, TIMER1_OFF, TIMER0_OFF, 
                 SPI_OFF, USART0_OFF, TWI_OFF);
+}
+//==================================================================================================
+// RTC setup
+//==================================================================================================
+void setupRTCModule() {
+  // SETUP RTC MODULE
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    Serial.flush();
+    while (1);
+  }
+
+  // automatically sets the RTC to the date & time on PC this sketch was compiled
+  //rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
 }
 //==================================================================================================
 // LOG FILE UTILS
@@ -102,7 +114,7 @@ void writeBufferToFile(String *fileBuffer) {
 // RTC UTILS
 //==================================================================================================
 void updateTimestamp() {
-  DateTime now = myRTC.now();
+  DateTime now = rtc.now();
   sprintf(timestamp, "%02d/%02d/%02d_%02d:%02d:%02d", now.year(), now.month(), now.day(), now.hour(), now.minute(), now.second()); 
   Serial.print(F("Date/Time: "));
   Serial.println(timestamp);

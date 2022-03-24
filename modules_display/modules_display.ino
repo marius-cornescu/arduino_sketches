@@ -41,24 +41,20 @@ void setup() {
 }
 //==================================================================================================
 void loop() {
+  
+  lcd.clear();
+  lcd.home();
+  lcd.print("Hello Monica!");
+  delay(10000);
+
 
   lcd.clear();
   lcd.home();
-
-  delay(10000);
-  
-  lcd.home();
-  lcd.print("Hello!");
-
-  delay(10000);
-
-
-  lcd.home();
   lcd.print("1234567890");
-
   delay(10000);
 
 
+  lcd.clear();
   lcd.setCursor(1, 0);        // set the cursor to position 1, line 1
   lcd.print("1234567890ABCDEFGHIJ1234567890ABCDEFGHIJ1234567890ABCDEFGHIJ");
   lcd.home();

@@ -41,15 +41,59 @@ void setup() {
 }
 //==================================================================================================
 void loop() {
-  //delay(100);
+
+  lcd.clear();
+  lcd.home();
+
+  delay(10000);
+  
+  lcd.home();
+  lcd.print("Hello!");
+
+  delay(10000);
+
+
+  lcd.home();
+  lcd.print("1234567890");
+
+  delay(10000);
+
+
+  lcd.setCursor(1, 0);        // set the cursor to position 1, line 1
+  lcd.print("1234567890ABCDEFGHIJ1234567890ABCDEFGHIJ1234567890ABCDEFGHIJ");
+  lcd.home();
+  delay(10000);
+
+
+  lcd.clear();
+  lcd.setCursor(1, 0);
+  lcd.print("AB");
+  lcd.home();
+  delay(20000);
+  
 }
 //==================================================================================================
 void setupDisplay() {
-  lcd.init();                  // initialise the LCD
-  lcd.backlight();              // turn backlight on
-
-  lcd.clear();                  // clear the screen
-  lcd.setCursor(0, 0);          // set the cursor to position 1, line 1
-  lcd.print("Hello YouTube!");  // write on the screen
+  lcd.init();                 // initialise the LCD
+  
+  lcd.backlight(); // turn backlight on
+  lcd.blink();     // cursor blinks
+  //------------- TEST SCREEN -----------------------
+  lcd.clear();         // clear the screen
+  lcd.home();          // set the cursor to position 0, line 1
+  // Numbers are stored but not displayed
+  lcd.print("***************#123456789012345678901234***************#123456789012345678901234");  // write on the screen
+  lcd.home();
+  delay(100);
+  //-------------------
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("$$$$$$$$$$$$$$$#12345678901234567890123#");
+  lcd.setCursor(0, 1);
+  lcd.print("$$$$$$$$$$$$$$$#12345678901234567890123#");
+  lcd.home();
+  delay(100);
+  //-------------------------------------------------
+  lcd.noBacklight(); // turn backlight off
 }
 //==================================================================================================

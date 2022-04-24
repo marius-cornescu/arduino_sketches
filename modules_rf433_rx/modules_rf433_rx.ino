@@ -30,7 +30,7 @@ void setup() {
 //==================================================================================================
 void loop() {
   if (rfRx.available()) {
-    output(rfRx.getReceivedValue(), rfRx.getReceivedBitlength(), rfRxwitch.getReceivedDelay(), rfRx.getReceivedRawdata(), rfRx.getReceivedProtocol());
+    output(rfRx.getReceivedValue(), rfRx.getReceivedBitlength(), rfRx.getReceivedDelay(), rfRx.getReceivedRawdata(), rfRx.getReceivedProtocol());
     rfRx.resetAvailable();
   }
 }

@@ -120,9 +120,7 @@ void loop() {
 }
 //==================================================================================================
 bool isButtonValid_FastCheck(unsigned long decimal, unsigned int length, unsigned int delay, unsigned int* raw, unsigned int protocol) {
-  #ifdef RfLogsToSerial
   printRxToSerial(decimal, length, delay, raw, protocol);
-  #endif
 
   if ((protocol == TARGET_PROTOCOL) && (length == TARGET_BIT_COUNT)) {
     return true;

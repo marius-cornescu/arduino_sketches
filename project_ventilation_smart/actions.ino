@@ -29,7 +29,7 @@ byte computeActionForButton(unsigned long buttonId) {
   return NO_ACTION;
 }
 //==================================================================================================
-byte processAction(byte previousAction, byte currentAction) {
+void processAction(byte previousAction, byte currentAction) {
   
 }
 //==================================================================================================

@@ -19,7 +19,7 @@ void setupDisplay() {
   //-------------------
   lcd.clear();
   //-------------------------------------------------
-  lcd.noBacklight(); // turn backlight off
+  //lcd.noBacklight(); // turn backlight off
   lcd.noBlink();
 }
 //**************************************************************************************************

@@ -24,8 +24,8 @@
 #include <RCSwitch.h>
 
 #ifdef UseDisplay
-  #include <Wire.h>
-  #include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 #endif
 
 //= CONSTANTS ======================================================================================
@@ -40,7 +40,7 @@ const unsigned int TARGET_PROTOCOL = 1;
 const unsigned int TARGET_BIT_COUNT = 24;
 
 /*
-   TELECOMANDA PATRATA => A
+   TELECOMANDA PATRATA (123)    => A
    TELECOMANDA 4 butoane (ABCD) => B
    TELECOMANDA 3 butoane (123)  => C
 */
@@ -56,28 +56,31 @@ const unsigned long BUTTON_3[BUTTON_3_SIZE] = {/*A*/9094706, /*B*/6145634, /*C*/
 
 const unsigned long BUTTON_4[BUTTON_4_SIZE] = {/*B*/6145633};
 
-
-const byte MAX_VALID_ACTION = 90; // any action with higher value will be ignored
-const byte UNKNOWN_ACTION = 99;
-const byte NO_ACTION = 100;
-
-const byte BUTTON_1_ACTION = 1;
-const byte BUTTON_2_ACTION = 2;
-const byte BUTTON_3_ACTION = 3;
-
-const byte BUTTON_4_ACTION = 4;
+//------------------------------------------------
+const byte ACTION_MAX_VALID = 90; // any action with higher value will be ignored
+const byte ACTION_UNKNOWN = 99;
+const byte ACTION_NOP = 100;
+//
+const byte ACTION_1 = 1;
+const byte ACTION_2 = 2;
+const byte ACTION_3 = 3;
+//
+const byte ACTION_4 = 4;
+//
+const byte ACTION_5 = 5;
+const byte ACTION_6 = 6;
 //--------------------------------------------------------------------------------------------------
 // RELEE
-const unsigned int RELEU_1 = 5; // DIGITAL PORT 5
-const unsigned int RELEU_2 = 6;
-const unsigned int RELEU_3 = 7;
-const unsigned int RELEU_4 = 8;
-
+const unsigned int RELEU_1_PIN = 5; // DIGITAL PORT 5
+const unsigned int RELEU_2_PIN = 6;
+const unsigned int RELEU_3_PIN = 7;
+const unsigned int RELEU_4_PIN = 8;
+//
 //= VARIABLES ======================================================================================
 volatile int ledState = HIGH;
 RCSwitch rfRx = RCSwitch();
 
-byte previousAction = UNKNOWN_ACTION;
+byte previousAction = ACTION_UNKNOWN;
 
 //==================================================================================================
 //**************************************************************************************************
@@ -89,10 +92,12 @@ void setup() {
   //
   rfRx.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
   //
-  #ifdef UseDisplay
+  defaultActionsState();
+  //
+#ifdef UseDisplay
   setupDisplay();
-  printActionOnDisplay(1234567, UNKNOWN_ACTION);
-  #endif
+  printActionOnDisplay(1234567, ACTION_1);
+#endif
 }
 //==================================================================================================
 void loop() {
@@ -102,7 +107,7 @@ void loop() {
 
       unsigned int currentAction = computeActionForButton(buttonId);
 
-      if (currentAction < MAX_VALID_ACTION) {
+      if (currentAction < ACTION_MAX_VALID) {
         if (currentAction != previousAction) {
           printActionOnDisplay(buttonId, currentAction);
 

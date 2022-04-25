@@ -2,15 +2,15 @@
 //==================================================================================================
 void defaultActionsState() {
   //
-  pinMode(RELEU_1_PIN, OUTPUT);
-  pinMode(RELEU_2_PIN, OUTPUT);
-  pinMode(RELEU_3_PIN, OUTPUT);
-  pinMode(RELEU_4_PIN, OUTPUT);
+  pinMode(RELAY_1_PIN, OUTPUT);
+  pinMode(RELAY_2_PIN, OUTPUT);
+  pinMode(RELAY_3_PIN, OUTPUT);
+  pinMode(RELAY_4_PIN, OUTPUT);
   //
-  digitalWrite(RELEU_1_PIN, LOW);
-  digitalWrite(RELEU_2_PIN, HIGH);
-  digitalWrite(RELEU_3_PIN, HIGH);
-  digitalWrite(RELEU_4_PIN, HIGH);
+  digitalWrite(RELAY_1_PIN, LOW);
+  digitalWrite(RELAY_2_PIN, HIGH);
+  digitalWrite(RELAY_3_PIN, HIGH);
+  digitalWrite(RELAY_4_PIN, HIGH);
 }
 //==================================================================================================
 byte computeActionForButton(unsigned long buttonId) {
@@ -72,29 +72,29 @@ void actions_DEFAULT() {
 //==================================================================================================
 void actions_ACTION1() {
   //
-  digitalWrite(RELEU_1_PIN, LOW);
-  digitalWrite(RELEU_2_PIN, HIGH);
-  digitalWrite(RELEU_3_PIN, HIGH);
+  digitalWrite(RELAY_1_PIN, LOW);
+  digitalWrite(RELAY_2_PIN, HIGH);
+  digitalWrite(RELAY_3_PIN, HIGH);
 }
 //==================================================================================================
 void actions_ACTION2() {
   //
-  digitalWrite(RELEU_1_PIN, HIGH);
-  digitalWrite(RELEU_2_PIN, LOW);
-  digitalWrite(RELEU_3_PIN, HIGH);
+  digitalWrite(RELAY_1_PIN, HIGH);
+  digitalWrite(RELAY_2_PIN, LOW);
+  digitalWrite(RELAY_3_PIN, HIGH);
 }
 //==================================================================================================
 void actions_ACTION3() {
   //
-  digitalWrite(RELEU_1_PIN, HIGH);
-  digitalWrite(RELEU_2_PIN, HIGH);
-  digitalWrite(RELEU_3_PIN, LOW);
+  digitalWrite(RELAY_1_PIN, HIGH);
+  digitalWrite(RELAY_2_PIN, HIGH);
+  digitalWrite(RELAY_3_PIN, LOW);
 }
 //==================================================================================================
 void actions_ACTION4() {
   //
-  digitalWrite(RELEU_1_PIN, HIGH);
-  digitalWrite(RELEU_2_PIN, HIGH);
-  digitalWrite(RELEU_3_PIN, HIGH);
+  digitalWrite(RELAY_1_PIN, HIGH);
+  digitalWrite(RELAY_2_PIN, HIGH);
+  digitalWrite(RELAY_3_PIN, HIGH);
 }
 //==================================================================================================

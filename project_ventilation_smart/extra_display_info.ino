@@ -27,22 +27,27 @@ void setupDisplay() {
 #endif
 
 //==================================================================================================
-void printActionOnDisplay(unsigned long buttonId, byte currentAction) {
-  #ifdef UseDisplay
-  
+void printActionOnDisplay(unsigned long label, byte currentAction) {
+#ifdef UseDisplay
+  char buffer[7];
+  dtostrf(label, 7, 0, buffer);
+  printActionOnDisplay(buffer, currentAction);
+#endif
+}
+void printActionOnDisplay(const char* label, byte currentAction) {
+#ifdef UseDisplay
   lcd.home();
   lcd.print("_______:        ");
   lcd.home();
-  lcd.print(buttonId);
+  lcd.print(label);
   lcd.print(": ");
   lcd.print(currentAction);
-
-  #endif
+#endif
 }
 //==================================================================================================
 void printProgressOnDisplay() {
-  #ifdef UseDisplay
-  
+#ifdef UseDisplay
+
   lcd.setCursor(DISPLAY_STATUS_POS, 1);        // set the cursor to position 15, line 2
   progress = progress + 1;
   if (progress == 1) {
@@ -58,6 +63,6 @@ void printProgressOnDisplay() {
     progress = 0;
   }
 
-  #endif
+#endif
 }
 //==================================================================================================

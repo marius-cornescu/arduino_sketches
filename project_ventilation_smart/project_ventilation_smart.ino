@@ -1,11 +1,11 @@
 /*
   PIN CONNECTIONS
-
+  -------------------------------
   RF-433 RX
     GND  --> GND
     VCC  --> 5V
     DATA --> D2
-
+  -------------------------------
   DISPLAY
     SDA is the serial data
     SCL is the serial clock
@@ -14,6 +14,13 @@
     VCC --> 5V
     SDA --> A4
     SCL --> A5
+  -------------------------------
+  RELAY
+    D5  --> Relay1
+    D6  --> Relay2
+    D7  --> Relay3
+    D8  --> Relay4
+  -------------------------------
 
 */
 //= DEFINES =======================================================================================
@@ -71,10 +78,10 @@ const byte ACTION_5 = 5;
 const byte ACTION_6 = 6;
 //--------------------------------------------------------------------------------------------------
 // RELEE
-const unsigned int RELEU_1_PIN = 5; // DIGITAL PORT 5
-const unsigned int RELEU_2_PIN = 6;
-const unsigned int RELEU_3_PIN = 7;
-const unsigned int RELEU_4_PIN = 8;
+const unsigned int RELAY_1_PIN = 5; // DIGITAL PORT 5
+const unsigned int RELAY_2_PIN = 6; // DIGITAL PORT 6
+const unsigned int RELAY_3_PIN = 7; // DIGITAL PORT 7
+const unsigned int RELAY_4_PIN = 8; // DIGITAL PORT 8
 //
 //= VARIABLES ======================================================================================
 volatile int ledState = HIGH;
@@ -96,7 +103,7 @@ void setup() {
   //
 #ifdef UseDisplay
   setupDisplay();
-  printActionOnDisplay(1234567, ACTION_1);
+  printActionOnDisplay("START-UP", ACTION_1);
 #endif
 }
 //==================================================================================================

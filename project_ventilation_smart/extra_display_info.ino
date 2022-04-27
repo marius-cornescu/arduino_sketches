@@ -1,5 +1,9 @@
 #ifdef UseDisplay
 
+//= CONSTANTS ======================================================================================
+const unsigned int DISPLAY_STATUS_POS = 15;
+
+//= VARIABLES ======================================================================================
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 byte progress = 0;                  // used to indicate progress on display
 
@@ -27,14 +31,14 @@ void setupDisplay() {
 #endif
 
 //==================================================================================================
-void printActionOnDisplay(unsigned long label, byte currentAction) {
+void display_Print1stLine(unsigned long label, byte currentAction) {
 #ifdef UseDisplay
   char buffer[7];
   dtostrf(label, 7, 0, buffer);
-  printActionOnDisplay(buffer, currentAction);
+  display_Print1stLine(buffer, currentAction);
 #endif
 }
-void printActionOnDisplay(const char* label, byte currentAction) {
+void display_Print1stLine(const char* label, byte currentAction) {
 #ifdef UseDisplay
   lcd.home();
   lcd.print("_______:        ");
@@ -45,10 +49,10 @@ void printActionOnDisplay(const char* label, byte currentAction) {
 #endif
 }
 //==================================================================================================
-void printProgressOnDisplay() {
+void display_ShowProgress() {
 #ifdef UseDisplay
 
-  lcd.setCursor(DISPLAY_STATUS_POS, 1);        // set the cursor to position 15, line 2
+  lcd.setCursor(DISPLAY_STATUS_POS, 0);        // set the cursor to position 15, line 2
   progress = progress + 1;
   if (progress == 1) {
     lcd.print("+");
@@ -63,6 +67,15 @@ void printProgressOnDisplay() {
     progress = 0;
   }
 
+#endif
+}
+//==================================================================================================
+void display_Print2ndLine(const char* label) {
+#ifdef UseDisplay
+  lcd.setCursor(0, 1);        // set the cursor to position 0, line 2
+  lcd.print("                                ");
+  lcd.setCursor(0, 1);
+  lcd.print(label);
 #endif
 }
 //==================================================================================================

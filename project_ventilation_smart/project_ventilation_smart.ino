@@ -37,15 +37,16 @@
 
 //= CONSTANTS ======================================================================================
 const int LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
+//------------------------------------------------
+// MANUAL MODE BUTTON
+const char MANUAL_MODE_PIN = 4;
+const bool IS_PRESSED = false;
 
-//--------------------------------------------------------------------------------------------------
-const unsigned int DISPLAY_STATUS_POS = 15;
-
-//--------------------------------------------------------------------------------------------------
+//------------------------------------------------
 // Fast Check
 const unsigned int TARGET_PROTOCOL = 1;
 const unsigned int TARGET_BIT_COUNT = 24;
-
+//------------------------------------------------
 /*
    TELECOMANDA PATRATA (123)    => A
    TELECOMANDA 4 butoane (ABCD) => B
@@ -94,16 +95,18 @@ byte previousAction = ACTION_UNKNOWN;
 void setup() {
   // Open serial communications and wait for port to open:
   Serial.begin(57600);
+  // Button port is in PullUp mode
+  pinMode(MANUAL_MODE_PIN, INPUT_PULLUP);
   // initialize digital pin LED_INDICATOR_PIN as an output.
   pinMode(LED_INDICATOR_PIN, OUTPUT);
   //
-  rfRx.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
-  //
   defaultActionsState();
+  //
+  rfRx.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
   //
 #ifdef UseDisplay
   setupDisplay();
-  printActionOnDisplay("START-UP", ACTION_1);
+  display_Print1stLine("START-UP", ACTION_1);
 #endif
 }
 //==================================================================================================
@@ -116,18 +119,26 @@ void loop() {
 
       if (currentAction < ACTION_MAX_VALID) {
         if (currentAction != previousAction) {
-          printActionOnDisplay(buttonId, currentAction);
+          display_Print1stLine(buttonId, currentAction);
 
           processAction(previousAction, currentAction);
 
           previousAction = currentAction;
         }
 
-        printProgressOnDisplay();
+        display_ShowProgress();
       }
     }
 
     rfRx.resetAvailable();
+
+  } else {
+    // GETS EXECUTED CONTINUOUSLY WHEN NO MESSAGE
+    bool isManualMode = (digitalRead(MANUAL_MODE_PIN) == IS_PRESSED); // LOW = not pressed
+    if (isManualMode == true) {
+      onManualModeSelected();
+    }
+
   }
 }
 //==================================================================================================
@@ -140,6 +151,28 @@ bool isButtonValid_FastCheck(unsigned long decimal, unsigned int length, unsigne
     Serial.println("XXXX");
     return false;
   }
+}
+//==================================================================================================
+void onManualModeSelected() {
+  // Signal MANUAL mode
+  digitalWrite(LED_INDICATOR_PIN, HIGH);
+  display_Print2ndLine("<MANUAL>");
+  while(digitalRead(MANUAL_MODE_PIN) == IS_PRESSED) {
+    // ignore while button still pressed
+  }
+  //
+  processManualModeActions();
+  //
+  display_ShowProgress();
+  //
+  delay(100);
+  display_Print2ndLine("");
+  digitalWrite(LED_INDICATOR_PIN, LOW);
+}
+//==================================================================================================
+void processManualModeActions() {
+  Serial.println("XXXX");
+  delay(1000);
 }
 //==================================================================================================
 //==================================================================================================

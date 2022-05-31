@@ -1,16 +1,21 @@
 
 //==================================================================================================
-void defaultActionsState() {
+void setupActionsState() {
   //
   pinMode(RELAY_1_PIN, OUTPUT);
   pinMode(RELAY_2_PIN, OUTPUT);
   pinMode(RELAY_3_PIN, OUTPUT);
   pinMode(RELAY_4_PIN, OUTPUT);
   //
-  digitalWrite(RELAY_1_PIN, LOW);
-  digitalWrite(RELAY_2_PIN, HIGH);
-  digitalWrite(RELAY_3_PIN, HIGH);
-  digitalWrite(RELAY_4_PIN, HIGH);
+  setActionsStateToDefault();
+}
+//==================================================================================================
+void setActionsStateToDefault() {
+    //
+    digitalWrite(RELAY_1_PIN, LOW);
+    digitalWrite(RELAY_2_PIN, HIGH);
+    digitalWrite(RELAY_3_PIN, HIGH);
+    digitalWrite(RELAY_4_PIN, HIGH);
 }
 //==================================================================================================
 byte computeActionForButton(unsigned long buttonId) {

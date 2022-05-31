@@ -24,6 +24,7 @@
 
 */
 //= DEFINES =======================================================================================
+//#define DEBUG
 #define UseDisplay      // Log information and actions to the Display // uses 18% of memory
 #define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
 
@@ -93,16 +94,18 @@ byte previousAction = ACTION_UNKNOWN;
 //==================================================================================================
 //**************************************************************************************************
 void setup() {
+#ifdef DEBUG
   // Open serial communications and wait for port to open:
   Serial.begin(57600);
+#endif
   // Button port is in PullUp mode
   pinMode(MANUAL_MODE_PIN, INPUT_PULLUP);
   // initialize digital pin LED_INDICATOR_PIN as an output.
   pinMode(LED_INDICATOR_PIN, OUTPUT);
   //
-  defaultActionsState();
+  setupActionsState();
   //
-  rfRx.enableReceive(0);  // Receiver on interrupt 0 => that is pin #2
+  rfRx.enableReceive(0);  // RF Receiver on INT0 => pin D2
   //
 #ifdef UseDisplay
   setupDisplay();

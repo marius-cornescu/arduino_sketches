@@ -1,4 +1,6 @@
 //= INCLUDES =======================================================================================
+#include <stdio.h> // for function sprintf
+
 #include <Wire.h>
 #include "PCF8575.h"
 
@@ -65,38 +67,14 @@ void loop()
 	PCF8575::DigitalInput di = pcf8575.digitalReadAll();
   // byte di = pcf8575.digitalReadAll();
   // Serial.println(di, BIN);
-	Serial.print(di.p0);
-	Serial.print(" - ");
-	Serial.print(di.p1);
-	Serial.print(" - ");
-	Serial.print(di.p2);
-	Serial.print(" - ");
-	Serial.print(di.p3);
-	Serial.print(" - ");
-	Serial.print(di.p4);
-	Serial.print(" - ");
-	Serial.print(di.p5);
-	Serial.print(" - ");
-	Serial.print(di.p6);
-	Serial.print(" - ");
-	Serial.print(di.p7);
-	Serial.print(" == ");
-	Serial.print(di.p8);
-	Serial.print(" - ");
-	Serial.print(di.p9);
-	Serial.print(" - ");
-	Serial.print(di.p10);
-	Serial.print(" - ");
-	Serial.print(di.p11);
-  Serial.print(" - ");
-	Serial.print(di.p12);
-  Serial.print(" - ");
-	Serial.print(di.p13);
-  Serial.print(" - ");
-	Serial.print(di.p14);
-  Serial.print(" - ");
-	Serial.print(di.p15);
-	Serial.println("");
+  char buffer[200];
+  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", di.p0, di.p1, di.p2, di.p3, di.p4, di.p5, di.p6, di.p7, di.p8, di.p9, di.p10, di.p11, di.p12, di.p13, di.p14, di.p15);
+  Serial.println(buffer);
+
+  //sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||", di.p0, di.p1, di.p2, di.p3, di.p4, di.p5, di.p6, di.p7);
+  //Serial.println(buffer);
+  //sprintf(buffer, "||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", di.p8, di.p9, di.p10, di.p11, di.p12, di.p13, di.p14, di.p15);
+  //Serial.println(buffer);
 
   pcf8575.digitalWrite(P0, ledState);
   pcf8575.digitalWrite(P1, (ledState == ON) ? OFF : ON);

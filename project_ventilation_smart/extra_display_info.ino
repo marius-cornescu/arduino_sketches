@@ -1,14 +1,15 @@
 #ifdef UseDisplay
 
 //= CONSTANTS ======================================================================================
-const unsigned int DISPLAY_STATUS_POS = 15;
+#define DISPLAY_STATUS_POS 15
+#define DISPLAY_I2C_ADDRESS 0x27
 
 //= VARIABLES ======================================================================================
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(DISPLAY_I2C_ADDRESS, 16, 2);
 byte progress = 0;                  // used to indicate progress on display
 
 //**************************************************************************************************
-void setupDisplay() {
+void display_Setup() {
   lcd.init();                 // initialise the LCD
 
   lcd.backlight(); // turn backlight on
@@ -19,7 +20,7 @@ void setupDisplay() {
   // Numbers are stored but not displayed
   lcd.print("***************#123456789012345678901234***************#123456789012345678901234");  // write on the screen
   lcd.home();
-  delay(500);
+  delay(TIME_TICK * 50);
   //-------------------
   lcd.clear();
   //-------------------------------------------------

@@ -27,17 +27,29 @@
 //#define DEBUG
 #define UseDisplay      // Log information and actions to the Display // uses 18% of memory
 //#define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
+//#define I2CLogsToSerial  // Print I2C messages to Serial Terminal       // uses ??% of memory
 
 //= INCLUDES =======================================================================================
+#if defined(DEBUG) || defined(RfLogsToSerial) || defined(I2CLogsToSerial)
+#include <stdio.h> // for function sprintf
+#endif
+
+#include <Wire.h>   // using I2C
+#include "PCF8575.h"
 #include <RCSwitch.h>
 
 #ifdef UseDisplay
-#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #endif
 
 //= CONSTANTS ======================================================================================
 const int LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
+//------------------------------------------------
+#ifdef DEBUG
+const byte TIME_TICK = 500;
+#else
+const byte TIME_TICK = 10;
+#endif
 //------------------------------------------------
 // MANUAL MODE BUTTON
 const char MANUAL_MODE_PIN = 4;
@@ -107,8 +119,10 @@ void setup() {
   //
   rfRx.enableReceive(0);  // RF Receiver on INT0 => pin D2
   //
+  menu_Setup();
+  //
 #ifdef UseDisplay
-  setupDisplay();
+  display_Setup();
   display_Print1stLine("START-UP", ACTION_1);
 #endif
 }
@@ -137,11 +151,8 @@ void loop() {
 
   } else {
     // GETS EXECUTED CONTINUOUSLY WHEN NO MESSAGE
-    bool isManualMode = (digitalRead(MANUAL_MODE_PIN) == IS_PRESSED); // LOW = not pressed
-    if (isManualMode == true) {
-      onManualModeSelected();
-    }
-
+    menu_ActIfActivity();
+    delay(TIME_TICK * 50);
   }
 }
 //==================================================================================================
@@ -151,31 +162,11 @@ bool isButtonValid_FastCheck(unsigned long decimal, unsigned int length, unsigne
   if ((protocol == TARGET_PROTOCOL) && (length == TARGET_BIT_COUNT)) {
     return true;
   } else {
-    Serial.println("XXXX");
+    #ifdef DEBUG
+      Serial.println("XXXX");
+    #endif
     return false;
   }
-}
-//==================================================================================================
-void onManualModeSelected() {
-  // Signal MANUAL mode
-  digitalWrite(LED_INDICATOR_PIN, HIGH);
-  display_Print2ndLine("<MANUAL>");
-  while(digitalRead(MANUAL_MODE_PIN) == IS_PRESSED) {
-    // ignore while button still pressed
-  }
-  //
-  processManualModeActions();
-  //
-  display_ShowProgress();
-  //
-  delay(100);
-  display_Print2ndLine("");
-  digitalWrite(LED_INDICATOR_PIN, LOW);
-}
-//==================================================================================================
-void processManualModeActions() {
-  Serial.println("XXXX");
-  delay(1000);
 }
 //==================================================================================================
 //==================================================================================================

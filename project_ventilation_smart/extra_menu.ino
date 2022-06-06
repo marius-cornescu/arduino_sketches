@@ -1,38 +1,7 @@
-/*
-  PIN CONNECTIONS
-  -------------------------------
-  I2C 16bit expansion board
-    GND  --> GND
-    VCC  --> 5V
-    D1 --> SDA
-    D2 --> SCL
-  -------------------------------
-
-*/
-//= DEFINES =======================================================================================
-//#define DEBUG
-//#define UseDisplay      // Log information and actions to the Display // uses ??% of memory
-//#define I2CLogsToSerial  // Print I2C messages to Serial Terminal       // uses ??% of memory
-
-//= INCLUDES =======================================================================================
-#ifdef I2CLogsToSerial
-#include <stdio.h> // for function sprintf
-#endif
-
-#include <Wire.h>
-#include "PCF8575.h"
-
 //= CONSTANTS ======================================================================================
-const byte LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
-const byte LED_MENU = P0;     // 
+const byte LED_MENU = P8;     // 
 
-#ifdef DEBUG
-const byte TIME_TICK = 500;
-#else
-const byte TIME_TICK = 10;
-#endif
-
-const byte I2C_ADDRESS = 0x20;
+#define BUTTONS_I2C_ADDRESS 0x20
 
 const byte ON = LOW;
 const byte OFF = HIGH;
@@ -52,62 +21,39 @@ const byte BTN_ENTER = 8;
 //----------------------------------
 
 //= VARIABLES ======================================================================================
-volatile byte ledState = ON;
-
 // adjust addresses if needed
-PCF8575 buttons(I2C_ADDRESS);  // add switches to lines  (used as input)
+PCF8575 buttons(BUTTONS_I2C_ADDRESS);  // add switches to lines  (used as input)
 
 
-//==================================================================================================
-void setup() {
-  // Open serial communications and wait for port to open:
-  Serial.begin(57600);
-  // initialize digital pin LED_INDICATOR_PIN as an output.
-  pinMode(LED_INDICATOR_PIN, OUTPUT);
-  digitalWrite(LED_INDICATOR_PIN, ledState);
-  //
-  menu_Setup();
-  //..............................
-  delay(TIME_TICK * 10);
-}
-//==================================================================================================
-void loop()
-{
-  ledState = (ledState == ON) ? OFF : ON;
-  digitalWrite(LED_INDICATOR_PIN, ledState);
-
-  menu_ActIfActivity();
-
-  delay(TIME_TICK * 10);
-}
 //**************************************************************************************************
 void menu_Setup() {
   Wire.begin();
   //
   // Set pinMode
   // Side A
-  buttons.pinMode(P0, OUTPUT);
-  buttons.pinMode(P1, OUTPUT);
-  buttons.pinMode(P2, OUTPUT);
-  buttons.pinMode(P3, OUTPUT);
-  buttons.pinMode(P4, OUTPUT);
-  buttons.pinMode(P5, OUTPUT);
-  buttons.pinMode(P6, OUTPUT);
-  buttons.pinMode(P7, OUTPUT);
+  buttons.pinMode(P0, INPUT);
+  buttons.pinMode(P1, INPUT);
+  buttons.pinMode(P2, INPUT);
+  buttons.pinMode(P3, INPUT);
+  buttons.pinMode(P4, INPUT);
+  buttons.pinMode(P5, INPUT);
+  buttons.pinMode(P6, INPUT);
+  buttons.pinMode(P7, INPUT);
   // Side B
-  buttons.pinMode(P8, INPUT);
-  buttons.pinMode(P9, INPUT);
-  buttons.pinMode(P10, INPUT);
-  buttons.pinMode(P11, INPUT);
-  buttons.pinMode(P12, INPUT);
-  buttons.pinMode(P13, INPUT);
-  buttons.pinMode(P14, INPUT);
-  buttons.pinMode(P15, INPUT);
+  buttons.pinMode(P8, OUTPUT);
+  buttons.pinMode(P9, OUTPUT);
+  buttons.pinMode(P10, OUTPUT);
+  buttons.pinMode(P11, OUTPUT);
+  buttons.pinMode(P12, OUTPUT);
+  buttons.pinMode(P13, OUTPUT);
+  buttons.pinMode(P14, OUTPUT);
+  buttons.pinMode(P15, OUTPUT);
   //..............................
   buttons.begin();
   //..............................
   buttons.digitalWrite(LED_MENU, OFF);
   //..............................
+  delay(TIME_TICK * 10);
 }
 //**************************************************************************************************
 //==================================================================================================
@@ -115,30 +61,38 @@ void menu_ActIfActivity() {
   byte button = get_button(buttons);
 
   if(button == BTN_ENTER) {
+    digitalWrite(LED_INDICATOR_PIN, HIGH);
+    //
+    display_Print2ndLine("<MANUAL>");
+    display_ShowProgress();
+    //
     menu_print();
     menu_process_loop(buttons);
+    //
+    display_Print2ndLine("");
+    digitalWrite(LED_INDICATOR_PIN, LOW);
   }
 }
 //==================================================================================================
 byte get_button(PCF8575 &io) {
   byte response = BTN_NONE;
-  PCF8575::DigitalInput io_values = io.digitalReadAll();
+  PCF8575::DigitalInput io_vals = io.digitalReadAll();
 
-  if(io_values.p8 == 1) {
+  if(io_vals.p7 == 1) {
     response = BTN_VENTILATION_1;
-  } else if(io_values.p9 == 1) {
+  } else if(io_vals.p6 == 1) {
     response = BTN_VENTILATION_2;
-  } else if(io_values.p10 == 1) {
+  } else if(io_vals.p5 == 1) {
     response = BTN_VENTILATION_3;
-  } else if(io_values.p11 == 1) {
+  } else if(io_vals.p5 == 1) {
     response = BTN_UP;
-  } else if(io_values.p12 == 1) {
+  } else if(io_vals.p3 == 1) {
     response = BTN_DOWN;
-  } else if(io_values.p13 == 1) {
+  } else if(io_vals.p2 == 1) {
     response = BTN_BACK;
-  } else if(io_values.p14 == 1) {
+  } else if(io_vals.p1 == 1) {
     response = BTN_FWARD;
-  } else if(io_values.p15 == 1) {
+  } else if(io_vals.p0 == 1) {
     response = BTN_ENTER;
   } else {
     response = BTN_NONE;
@@ -146,8 +100,8 @@ byte get_button(PCF8575 &io) {
 
 #ifdef I2CLogsToSerial
   char buffer[200];
-  sprintf(buffer, "|8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d| => %d", io_values.p8, io_values.p9, io_values.p10, io_values.p11, io_values.p12, io_values.p13, io_values.p14, io_values.p15, response);
-  //Serial.println(buffer);
+  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d| => %d", io_vals.p0, io_vals.p1, io_vals.p2, io_vals.p3, io_vals.p4, io_vals.p5, io_vals.p6, io_vals.p7, response);
+  Serial.println(buffer);
 #endif
 
   return response;
@@ -190,13 +144,13 @@ void menu_process_button_action(byte &button, byte &prevs_button) {
 
   switch (button) {
     case BTN_VENTILATION_1:
-      Serial.println("VENTILATION SPEED 1"); // FIXME
+      actions_ACTION1();
       break;
     case BTN_VENTILATION_2:
-      Serial.println("VENTILATION SPEED 2"); // FIXME
+      actions_ACTION2();
       break;
     case BTN_VENTILATION_3:
-      Serial.println("VENTILATION SPEED 3"); // FIXME
+      actions_ACTION3();
       break;
     case BTN_UP:
       // statements

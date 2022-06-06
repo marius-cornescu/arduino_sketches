@@ -6,9 +6,9 @@
 //= INCLUDES =======================================================================================
 #include <LowPower.h> // power management
 
-#include <SD.h>       // SD card
-
 #include <RTClib.h>   // RT clock
+
+#include <SD.h>       // SD card
 
 //= CONSTANTS ======================================================================================
 const int LED_INDICATOR_PIN = LED_BUILTIN; // choose the pin for the LED

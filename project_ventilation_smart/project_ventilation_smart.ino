@@ -26,7 +26,7 @@
 //= DEFINES =======================================================================================
 //#define DEBUG
 #define UseDisplay      // Log information and actions to the Display // uses 18% of memory
-#define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
+//#define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
 
 //= INCLUDES =======================================================================================
 #include <RCSwitch.h>

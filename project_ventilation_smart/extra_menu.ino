@@ -1,5 +1,5 @@
 //= CONSTANTS ======================================================================================
-const byte LED_MENU = P8;     // 
+const byte LED_MENU = P0;     // 
 
 #define BUTTONS_I2C_ADDRESS 0x20
 
@@ -31,23 +31,23 @@ void menu_Setup() {
   //
   // Set pinMode
   // Side A
-  buttons.pinMode(P0, INPUT);
-  buttons.pinMode(P1, INPUT);
-  buttons.pinMode(P2, INPUT);
-  buttons.pinMode(P3, INPUT);
-  buttons.pinMode(P4, INPUT);
-  buttons.pinMode(P5, INPUT);
-  buttons.pinMode(P6, INPUT);
-  buttons.pinMode(P7, INPUT);
+  buttons.pinMode(P0, OUTPUT);
+  buttons.pinMode(P1, OUTPUT);
+  buttons.pinMode(P2, OUTPUT);
+  buttons.pinMode(P3, OUTPUT);
+  buttons.pinMode(P4, OUTPUT);
+  buttons.pinMode(P5, OUTPUT);
+  buttons.pinMode(P6, OUTPUT);
+  buttons.pinMode(P7, OUTPUT);
   // Side B
-  buttons.pinMode(P8, OUTPUT);
-  buttons.pinMode(P9, OUTPUT);
-  buttons.pinMode(P10, OUTPUT);
-  buttons.pinMode(P11, OUTPUT);
-  buttons.pinMode(P12, OUTPUT);
-  buttons.pinMode(P13, OUTPUT);
-  buttons.pinMode(P14, OUTPUT);
-  buttons.pinMode(P15, OUTPUT);
+  buttons.pinMode(P8, INPUT);
+  buttons.pinMode(P9, INPUT);
+  buttons.pinMode(P10, INPUT);
+  buttons.pinMode(P11, INPUT);
+  buttons.pinMode(P12, INPUT);
+  buttons.pinMode(P13, INPUT);
+  buttons.pinMode(P14, INPUT);
+  buttons.pinMode(P15, INPUT);
   //..............................
   buttons.begin();
   //..............................
@@ -78,21 +78,21 @@ byte get_button(PCF8575 &io) {
   byte response = BTN_NONE;
   PCF8575::DigitalInput io_vals = io.digitalReadAll();
 
-  if(io_vals.p7 == 1) {
+  if(io_vals.p8 == 1) {
     response = BTN_VENTILATION_1;
-  } else if(io_vals.p6 == 1) {
+  } else if(io_vals.p9 == 1) {
     response = BTN_VENTILATION_2;
-  } else if(io_vals.p5 == 1) {
+  } else if(io_vals.p10 == 1) {
     response = BTN_VENTILATION_3;
-  } else if(io_vals.p5 == 1) {
+  } else if(io_vals.p11 == 1) {
     response = BTN_UP;
-  } else if(io_vals.p3 == 1) {
+  } else if(io_vals.p12 == 1) {
     response = BTN_DOWN;
-  } else if(io_vals.p2 == 1) {
+  } else if(io_vals.p13 == 1) {
     response = BTN_BACK;
-  } else if(io_vals.p1 == 1) {
+  } else if(io_vals.p14 == 1) {
     response = BTN_FWARD;
-  } else if(io_vals.p0 == 1) {
+  } else if(io_vals.p15 == 1) {
     response = BTN_ENTER;
   } else {
     response = BTN_NONE;
@@ -100,7 +100,9 @@ byte get_button(PCF8575 &io) {
 
 #ifdef I2CLogsToSerial
   char buffer[200];
-  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d| => %d", io_vals.p0, io_vals.p1, io_vals.p2, io_vals.p3, io_vals.p4, io_vals.p5, io_vals.p6, io_vals.p7, response);
+
+  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", io_vals.p0, io_vals.p1, io_vals.p2, io_vals.p3, io_vals.p4, io_vals.p5, io_vals.p6, io_vals.p7, io_vals.p8, io_vals.p9, io_vals.p10, io_vals.p11, io_vals.p12, io_vals.p13, io_vals.p14, io_vals.p15);
+  //sprintf(buffer, "|8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d| => %d", io_vals.p8, io_vals.p9, io_vals.p10, io_vals.p11, io_vals.p12, io_vals.p13, io_vals.p14, io_vals.p15, response);
   Serial.println(buffer);
 #endif
 

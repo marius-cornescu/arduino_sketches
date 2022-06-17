@@ -1,16 +1,16 @@
 
 //==================================================================================================
-void setupActionsState() {
+void actions_SetupInitialState() {
   //
   pinMode(RELAY_1_PIN, OUTPUT);
   pinMode(RELAY_2_PIN, OUTPUT);
   pinMode(RELAY_3_PIN, OUTPUT);
   pinMode(RELAY_4_PIN, OUTPUT);
   //
-  setActionsStateToDefault();
+  actions_SetStateToDefault();
 }
 //==================================================================================================
-void setActionsStateToDefault() {
+void actions_SetStateToDefault() {
     //
     digitalWrite(RELAY_1_PIN, LOW);
     digitalWrite(RELAY_2_PIN, HIGH);
@@ -18,7 +18,7 @@ void setActionsStateToDefault() {
     digitalWrite(RELAY_4_PIN, HIGH);
 }
 //==================================================================================================
-byte computeActionForButton(unsigned long buttonId) {
+byte actions_ComputeActionForButton(unsigned long buttonId) {
   for (byte i = 0; i < BUTTON_1_SIZE; i = i + 1) {
     if (BUTTON_1[i] == buttonId) {
       return ACTION_1;
@@ -46,7 +46,7 @@ byte computeActionForButton(unsigned long buttonId) {
   return ACTION_NOP;
 }
 //==================================================================================================
-void processAction(byte previousAction, byte currentAction) {
+void actions_ProcessAction(byte previousAction, byte currentAction) {
   switch (currentAction) {
     //-------------------------------------------
     case ACTION_1:
@@ -80,6 +80,8 @@ void actions_ACTION1() {
   digitalWrite(RELAY_1_PIN, LOW);
   digitalWrite(RELAY_2_PIN, HIGH);
   digitalWrite(RELAY_3_PIN, HIGH);
+  //
+  display_Print1stLine("VENT: SPEED", 1);
 }
 //==================================================================================================
 void actions_ACTION2() {
@@ -87,6 +89,8 @@ void actions_ACTION2() {
   digitalWrite(RELAY_1_PIN, HIGH);
   digitalWrite(RELAY_2_PIN, LOW);
   digitalWrite(RELAY_3_PIN, HIGH);
+  //
+  display_Print1stLine("VENT: SPEED", 2);
 }
 //==================================================================================================
 void actions_ACTION3() {
@@ -94,12 +98,16 @@ void actions_ACTION3() {
   digitalWrite(RELAY_1_PIN, HIGH);
   digitalWrite(RELAY_2_PIN, HIGH);
   digitalWrite(RELAY_3_PIN, LOW);
+  //
+  display_Print1stLine("VENT: SPEED", 3);
 }
 //==================================================================================================
 void actions_ACTION4() {
   //
-  digitalWrite(RELAY_1_PIN, HIGH);
-  digitalWrite(RELAY_2_PIN, HIGH);
-  digitalWrite(RELAY_3_PIN, HIGH);
+  //digitalWrite(RELAY_1_PIN, HIGH);
+  //digitalWrite(RELAY_2_PIN, HIGH);
+  //digitalWrite(RELAY_3_PIN, HIGH);
+  //
+  display_Print1stLine("TBD", 0);
 }
 //==================================================================================================

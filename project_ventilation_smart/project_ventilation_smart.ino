@@ -23,11 +23,12 @@
   -------------------------------
 
 */
-//= DEFINES =======================================================================================
+//= DEFINES ========================================================================================
 //#define DEBUG
 #define UseDisplay      // Log information and actions to the Display // uses 18% of memory
 //#define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
 //#define I2CLogsToSerial  // Print I2C messages to Serial Terminal       // uses ??% of memory
+//#define UseRealTimeClock  //
 
 //= INCLUDES =======================================================================================
 #if defined(DEBUG) || defined(RfLogsToSerial) || defined(I2CLogsToSerial)
@@ -54,11 +55,12 @@ const byte TIME_TICK = 10;
 // MANUAL MODE BUTTON
 const char MANUAL_MODE_PIN = 4;
 const bool IS_PRESSED = false;
-
+//------------------------------------------------
+const char RF_INTERRUPT_D2_PIN = 0; // RF Receiver on INT0 => pin D2
 //------------------------------------------------
 // Fast Check
-const unsigned int TARGET_PROTOCOL = 1;
-const unsigned int TARGET_BIT_COUNT = 24;
+const unsigned int RF_TARGET_PROTOCOL = 1;
+const unsigned int RF_TARGET_BIT_COUNT = 24;
 //------------------------------------------------
 /*
    TELECOMANDA PATRATA (123)    => A
@@ -109,15 +111,14 @@ void setup() {
 #ifdef DEBUG
   // Open serial communications and wait for port to open:
   Serial.begin(57600);
+  Serial.println("START-UP");
 #endif
   // Button port is in PullUp mode
-  pinMode(MANUAL_MODE_PIN, INPUT_PULLUP);
+  //pinMode(MANUAL_MODE_PIN, INPUT_PULLUP);
   // initialize digital pin LED_INDICATOR_PIN as an output.
   pinMode(LED_INDICATOR_PIN, OUTPUT);
   //
-  setupActionsState();
-  //
-  rfRx.enableReceive(0);  // RF Receiver on INT0 => pin D2
+  actions_SetupInitialState();
   //
   menu_Setup();
   //
@@ -125,20 +126,25 @@ void setup() {
   display_Setup();
   display_Print1stLine("START-UP", ACTION_1);
 #endif
+  //
+  rfRx.enableReceive(RF_INTERRUPT_D2_PIN);
+  //
+  delay(TIME_TICK * 50);
 }
+//**************************************************************************************************
 //==================================================================================================
 void loop() {
   if (rfRx.available()) {
     unsigned long buttonId = rfRx.getReceivedValue();
     if (isButtonValid_FastCheck(buttonId, rfRx.getReceivedBitlength(), rfRx.getReceivedDelay(), rfRx.getReceivedRawdata(), rfRx.getReceivedProtocol())) {
 
-      unsigned int currentAction = computeActionForButton(buttonId);
+      unsigned int currentAction = actions_ComputeActionForButton(buttonId);
 
       if (currentAction < ACTION_MAX_VALID) {
         if (currentAction != previousAction) {
-          display_Print1stLine(buttonId, currentAction);
+          display_Print1stLine("ACTION", currentAction);
 
-          processAction(previousAction, currentAction);
+          actions_ProcessAction(previousAction, currentAction);
 
           previousAction = currentAction;
         }
@@ -148,18 +154,20 @@ void loop() {
     }
 
     rfRx.resetAvailable();
-
+  //
   } else {
     // GETS EXECUTED CONTINUOUSLY WHEN NO MESSAGE
     menu_ActIfActivity();
-    delay(TIME_TICK * 50);
+    delay(TIME_TICK * 10);
+    //
+    display_ShowProgress();
   }
 }
 //==================================================================================================
 bool isButtonValid_FastCheck(unsigned long decimal, unsigned int length, unsigned int delay, unsigned int* raw, unsigned int protocol) {
   printRxToSerial(decimal, length, delay, raw, protocol);
 
-  if ((protocol == TARGET_PROTOCOL) && (length == TARGET_BIT_COUNT)) {
+  if ((protocol == RF_TARGET_PROTOCOL) && (length == RF_TARGET_BIT_COUNT)) {
     return true;
   } else {
     #ifdef DEBUG

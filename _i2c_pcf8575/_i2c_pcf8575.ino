@@ -64,16 +64,16 @@ void loop()
   ledState = (ledState == ON) ? OFF : ON;
 
   // echos the lines
-	PCF8575::DigitalInput di = pcf8575.digitalReadAll();
-  // byte di = pcf8575.digitalReadAll();
-  // Serial.println(di, BIN);
+	PCF8575::DigitalInput io_vals = pcf8575.digitalReadAll();
+  // byte io_vals = pcf8575.digitalReadAll();
+  // Serial.println(io_vals, BIN);
   char buffer[200];
-  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", di.p0, di.p1, di.p2, di.p3, di.p4, di.p5, di.p6, di.p7, di.p8, di.p9, di.p10, di.p11, di.p12, di.p13, di.p14, di.p15);
+  sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", io_vals.p0, io_vals.p1, io_vals.p2, io_vals.p3, io_vals.p4, io_vals.p5, io_vals.p6, io_vals.p7, io_vals.p8, io_vals.p9, io_vals.p10, io_vals.p11, io_vals.p12, io_vals.p13, io_vals.p14, io_vals.p15);
   Serial.println(buffer);
 
-  //sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||", di.p0, di.p1, di.p2, di.p3, di.p4, di.p5, di.p6, di.p7);
+  //sprintf(buffer, "|0=%d|1=%d|2=%d|3=%d|4=%d|5=%d|6=%d|7=%d||||", io_vals.p0, io_vals.p1, io_vals.p2, io_vals.p3, io_vals.p4, io_vals.p5, io_vals.p6, io_vals.p7);
   //Serial.println(buffer);
-  //sprintf(buffer, "||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", di.p8, di.p9, di.p10, di.p11, di.p12, di.p13, di.p14, di.p15);
+  //sprintf(buffer, "||||8=%d|9=%d|10=%d|11=%d|12=%d|13=%d|14=%d|15=%d|", io_vals.p8, io_vals.p9, io_vals.p10, io_vals.p11, io_vals.p12, io_vals.p13, io_vals.p14, io_vals.p15);
   //Serial.println(buffer);
 
   pcf8575.digitalWrite(P0, ledState);

@@ -46,6 +46,8 @@
 #endif
 
 #include "Remotes.h"
+#include "Actions.h"
+
 #include <Wire.h>   // using I2C
 #include "PCF8575.h"
 #include <RCSwitch.h>
@@ -77,36 +79,7 @@ const char RF_INTERRUPT_D2_PIN = 0; // RF Receiver on INT0 => pin D2
 const unsigned int RF_TARGET_PROTOCOL = 1;
 const unsigned int RF_TARGET_BIT_COUNT = 24;
 //------------------------------------------------
-/*
-   TELECOMANDA PATRATA (123)    => A
-   TELECOMANDA 4 butoane (ABCD) => B
-   TELECOMANDA 3 butoane (123)  => C
-*/
-const unsigned int ACTION_1_BUTTONS_SIZE = 3;
-const unsigned int ACTION_2_BUTTONS_SIZE = 3;
-const unsigned int ACTION_3_BUTTONS_SIZE = 3;
 
-const unsigned int ACTION_4_BUTTONS_SIZE = 1;
-
-const unsigned long ACTION_1_BUTTONS[ACTION_1_BUTTONS_SIZE] = {Remote1.button1, Remote2.button1, Remote3.button1};
-const unsigned long ACTION_2_BUTTONS[ACTION_2_BUTTONS_SIZE] = {Remote1.b2, Remote2.b2, Remote3.b2};
-const unsigned long ACTION_3_BUTTONS[ACTION_3_BUTTONS_SIZE] = {Remote1.b3, Remote2.b3, Remote3.b3};
-
-const unsigned long ACTION_4_BUTTONS[ACTION_4_BUTTONS_SIZE] = {Remote3.b4};
-
-//------------------------------------------------
-const byte ACTION_MAX_VALID = 90; // any action with higher value will be ignored
-const byte ACTION_UNKNOWN = 99;
-const byte ACTION_NOP = 100;
-//
-const byte ACTION_1 = 1;
-const byte ACTION_2 = 2;
-const byte ACTION_3 = 3;
-//
-const byte ACTION_4 = 4;
-//
-const byte ACTION_5 = 5;
-const byte ACTION_6 = 6;
 //--------------------------------------------------------------------------------------------------
 // RELEE
 const unsigned int RELAY_1_PIN = 5; // DIGITAL PORT 5
@@ -133,13 +106,13 @@ void setup() {
   // initialize digital pin LED_INDICATOR_PIN as an output.
   pinMode(LED_INDICATOR_PIN, OUTPUT);
   //
-  actions_SetupInitialState();
+  actions_Setup();
   //
   menu_Setup();
   //
 #ifdef UseDisplay
   display_Setup();
-  display_Print1stLine("START-UP", ACTION_1);
+  display_Print1stLine("START-UP", Action1.name);
 #endif
   //
   rfRx.enableReceive(RF_INTERRUPT_D2_PIN);

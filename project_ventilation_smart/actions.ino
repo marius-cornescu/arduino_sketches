@@ -1,8 +1,20 @@
+//= INCLUDES =======================================================================================
+#include "Actions.h"
+
 //= CONSTANTS ======================================================================================
 #define ACTION4_DELAY 5
 
 //= VARIABLES ======================================================================================
 
+//**************************************************************************************************
+void actions_Setup() {
+  actions_SetupInitialState();
+  //
+#ifdef DEBUG
+  debug_PrintActions();
+#endif
+}
+//**************************************************************************************************
 //==================================================================================================
 void actions_SetupInitialState() {
   //
@@ -15,40 +27,70 @@ void actions_SetupInitialState() {
 }
 //==================================================================================================
 void actions_SetStateToDefault() {
-    //
-    digitalWrite(RELAY_1_PIN, LOW);
-    digitalWrite(RELAY_2_PIN, HIGH);
-    digitalWrite(RELAY_3_PIN, HIGH);
-    digitalWrite(RELAY_4_PIN, HIGH);
+  //
+  digitalWrite(RELAY_1_PIN, LOW);
+  digitalWrite(RELAY_2_PIN, HIGH);
+  digitalWrite(RELAY_3_PIN, HIGH);
+  digitalWrite(RELAY_4_PIN, HIGH);
 }
 //==================================================================================================
 byte actions_ComputeActionForButton(unsigned long buttonId) {
-  for (byte i = 0; i < ACTION_1_BUTTONS_SIZE; i = i + 1) {
-    if (ACTION_1_BUTTONS[i] == buttonId) {
-      return ACTION_1;
+  for (byte i = 0; i < Action1.buttonCnt; i = i + 1) {
+    if (Action1.buttons[i] == buttonId) {
+      return Action1.actionCode;
     }
   }
 
-  for (byte i = 0; i < ACTION_2_BUTTONS_SIZE; i = i + 1) {
-    if (ACTION_2_BUTTONS[i] == buttonId) {
-      return ACTION_2;
+  for (byte i = 0; i < Action2.buttonCnt; i = i + 1) {
+    if (Action2.buttons[i] == buttonId) {
+      return Action2.actionCode;
     }
   }
 
-  for (byte i = 0; i < ACTION_3_BUTTONS_SIZE; i = i + 1) {
-    if (ACTION_3_BUTTONS[i] == buttonId) {
-      return ACTION_3;
+  for (byte i = 0; i < Action3.buttonCnt; i = i + 1) {
+    if (Action3.buttons[i] == buttonId) {
+      return Action3.actionCode;
     }
   }
-
-  for (byte i = 0; i < ACTION_4_BUTTONS_SIZE; i = i + 1) {
-    if (ACTION_4_BUTTONS[i] == buttonId) {
-      return ACTION_4;
+  for (byte i = 0; i < Action4.buttonCnt; i = i + 1) {
+    if (Action4.buttons[i] == buttonId) {
+      return Action4.actionCode;
     }
   }
 
   return ACTION_NOP;
 }
+//==================================================================================================
+#ifdef DEBUG
+void debug_PrintActions() {
+  //Serial.print("|"); Serial.print(Remote1.button1); Serial.print("|"); Serial.print(Remote1.button2); Serial.print("|"); Serial.print(Remote1.button3); Serial.print("|");Serial.print(Remote1.button4);Serial.print("|"); Serial.println();
+
+  Serial.println("--------------------------");
+  for (byte i = 0; i < ARRAY_LEN(Actions); i = i + 1) {
+      debug_PrintAction(Actions[i]);
+  }
+  Serial.println("--------------------------");
+
+  //Serial.print("|"); Serial.print(Action1.buttons[0]); Serial.print("|"); Serial.print(Action1.buttons[1]); Serial.print("|"); Serial.print(Action1.buttons[2]); Serial.print("|"); Serial.println();
+}
+
+void debug_PrintAction(const struct Action *action) {
+
+  char buffer[200];
+  sprintf(buffer, "Action {name=\"%s\", actionCode=%d, buttonCnt=%d, buttons=[ ",
+          action->name, action->actionCode, action->buttonCnt);
+  Serial.print(buffer);
+
+  for (int i = 0; i < action->buttonCnt; i++) {
+    if (i) {
+      Serial.print(", ");
+    }
+    Serial.print(action->buttons[i]);
+    
+  }
+  Serial.println(" ]}");
+}
+#endif
 //==================================================================================================
 void actions_ProcessAction(byte currentAction) {
   switch (currentAction) {

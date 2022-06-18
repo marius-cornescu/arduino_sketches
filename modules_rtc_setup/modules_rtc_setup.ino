@@ -13,7 +13,7 @@ Sets the time from input and prints back time stamps for 5 seconds
 #include <Wire.h>
 
 //= CONSTANTS ======================================================================================
-const int BUTTON_PIN = 7;  // the number of the pushbutton pin
+const int BUTTON_PIN = D8;  // the number of the pushbutton pin
 
 //= VARIABLES ======================================================================================
 DS3231 rtcClock;
@@ -31,8 +31,12 @@ bool century = false;
 bool h12Flag;
 bool pmFlag;
 
-int lastState = HIGH;  // the previous state from the input pin
-int currentState;      // the current reading from the input pin
+byte lastState = HIGH;  // the previous state from the input pin
+byte currentState;      // the current reading from the input pin
+
+#if defined(ESP8266)
+  ICACHE_RAM_ATTR void buttonWasPressed();
+#endif
 
 //==================================================================================================
 /***************************************************
@@ -47,7 +51,8 @@ void setup() {
 
   // initialize the pushbutton pin as an pull-up input
   // the pull-up input pin will be HIGH when the switch is open and LOW when the switch is closed.
-  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(BUTTON_PIN, INPUT);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonWasPressed, RISING);
 
   // Start the I2C interface
   Wire.begin();
@@ -114,9 +119,11 @@ void loop() {
   delay(1000);
   printTheTime();
 
-  if (wasButtonPressed()) {
-    setAlarm1();
-  }
+  Serial.println("====================================================");
+
+//  if (wasButtonPressed()) {
+//    setAlarm1();
+//  }
 
   if (rtcClock.checkIfAlarm(1)) {
     Serial.println("Alarm 1 triggered");
@@ -209,30 +216,27 @@ void printTheTime() {
   Serial.println(timestamp);
 }
 //==================================================================================================
-boolean wasButtonPressed() {
-  boolean buttonPressed = false;
-
+void buttonWasPressed() {
+  Serial.println("#");
+  
   // read the state of the switch/button:
   currentState = digitalRead(BUTTON_PIN);
 
   if (lastState == LOW && currentState == HIGH) {
-    buttonPressed = true;
-    Serial.println("The state changed from LOW to HIGH");
+    setAlarm1();
+    Serial.println("State changed from LOW to HIGH");
   }
 
   // save the last state
   lastState = currentState;
-
-  return buttonPressed;
 }
 //==================================================================================================
 void setAlarm1() {
   DateTime now = myRTC.now();
-  // set A2 to two minutes past, on current day of the week.
-  rtcClock.setA1Time(now.dayOfTheWeek(), now.hour(), now.minute() + 1,
+  // set A2 to two minutes past, on current day of month.
+  rtcClock.setA1Time(now.day(), now.hour(), now.minute() + 1,
                      now.second(),
-                     0x0, true,
-                     false, false);
+                     0x0, false, false, false);
   // Turn on alarm, with external interrupt
   rtcClock.turnOnAlarm(1);
 }
@@ -241,8 +245,7 @@ void setAlarm2ToRunInMinutes(byte extraMinutes) {
   DateTime now = myRTC.now();
   // set A2 to two minutes past, on current day of month.
   rtcClock.setA2Time(now.day(), now.hour(), now.minute() + extraMinutes,
-                     0x0, false,
-                     false, false);
+                     0x0, false, false, false);
   // Turn on alarm, with external interrupt
   rtcClock.turnOnAlarm(2);
 }

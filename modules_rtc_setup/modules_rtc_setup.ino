@@ -31,7 +31,7 @@ bool century = false;
 bool h12Flag;
 bool pmFlag;
 
-byte lastState = HIGH;  // the previous state from the input pin
+byte lastState = LOW;  // the previous state from the input pin
 byte currentState;      // the current reading from the input pin
 
 #if defined(ESP8266)
@@ -49,10 +49,8 @@ void setup() {
   // Start the serial port
   Serial.begin(57600);
 
-  // initialize the pushbutton pin as an pull-up input
-  // the pull-up input pin will be HIGH when the switch is open and LOW when the switch is closed.
   pinMode(BUTTON_PIN, INPUT);
-  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonWasPressed, RISING);
+  attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), buttonWasPressed, FALLING);
 
   // Start the I2C interface
   Wire.begin();
@@ -121,11 +119,7 @@ void loop() {
 
   Serial.println("====================================================");
 
-//  if (wasButtonPressed()) {
-//    setAlarm1();
-//  }
-
-  if (rtcClock.checkIfAlarm(1)) {
+  if (rtcClock.checkIfAlarm(1)) { // ONE time per trigger
     Serial.println("Alarm 1 triggered");
   }
 }

@@ -150,7 +150,7 @@ void loop() {
     menu_ActIfActivity();
     delay(TIME_TICK * 10);
     //
-    display_ShowProgress();
+    //display_ShowProgress();
   }
 }
 //==================================================================================================

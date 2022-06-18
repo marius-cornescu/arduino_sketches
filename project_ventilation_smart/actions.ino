@@ -35,26 +35,12 @@ void actions_SetStateToDefault() {
 }
 //==================================================================================================
 byte actions_ComputeActionForButton(unsigned long buttonId) {
-  for (byte i = 0; i < Action1.buttonCnt; i = i + 1) {
-    if (Action1.buttons[i] == buttonId) {
-      return Action1.actionCode;
-    }
-  }
-
-  for (byte i = 0; i < Action2.buttonCnt; i = i + 1) {
-    if (Action2.buttons[i] == buttonId) {
-      return Action2.actionCode;
-    }
-  }
-
-  for (byte i = 0; i < Action3.buttonCnt; i = i + 1) {
-    if (Action3.buttons[i] == buttonId) {
-      return Action3.actionCode;
-    }
-  }
-  for (byte i = 0; i < Action4.buttonCnt; i = i + 1) {
-    if (Action4.buttons[i] == buttonId) {
-      return Action4.actionCode;
+  for (byte act = 0; act < ARRAY_LEN(Actions); act = act + 1) {
+    Action *action = Actions[act];
+    for (int i = 0; i < action->buttonCnt; i++) {
+      if (action->buttons[i] == buttonId) {
+        return action->actionCode;
+      }
     }
   }
 
@@ -67,7 +53,7 @@ void debug_PrintActions() {
 
   Serial.println("--------------------------");
   for (byte i = 0; i < ARRAY_LEN(Actions); i = i + 1) {
-      debug_PrintAction(Actions[i]);
+    debug_PrintAction(Actions[i]);
   }
   Serial.println("--------------------------");
 
@@ -75,7 +61,6 @@ void debug_PrintActions() {
 }
 
 void debug_PrintAction(const struct Action *action) {
-
   char buffer[200];
   sprintf(buffer, "Action {name=\"%s\", actionCode=%d, buttonCnt=%d, buttons=[ ",
           action->name, action->actionCode, action->buttonCnt);
@@ -86,11 +71,16 @@ void debug_PrintAction(const struct Action *action) {
       Serial.print(", ");
     }
     Serial.print(action->buttons[i]);
-    
+
   }
   Serial.println(" ]}");
 }
 #endif
+//==================================================================================================
+void actions_ProcessAction(const struct Action *action) {
+  actions_ProcessAction(action->actionCode);
+  display_Print1stLine(action->name);
+}
 //==================================================================================================
 void actions_ProcessAction(byte currentAction) {
   switch (currentAction) {
@@ -127,7 +117,7 @@ void actions_ACTION1() {
   digitalWrite(RELAY_2_PIN, HIGH);
   digitalWrite(RELAY_3_PIN, HIGH);
   //
-  display_Print1stLine("VENT: SPEED", 1);
+  display_Print1stLine("Vent", 1);
 }
 //==================================================================================================
 void actions_ACTION2() {
@@ -136,7 +126,7 @@ void actions_ACTION2() {
   digitalWrite(RELAY_2_PIN, LOW);
   digitalWrite(RELAY_3_PIN, HIGH);
   //
-  display_Print1stLine("VENT: SPEED", 2);
+  display_Print1stLine("Vent", 2);
 }
 //==================================================================================================
 void actions_ACTION3() {
@@ -145,7 +135,7 @@ void actions_ACTION3() {
   digitalWrite(RELAY_2_PIN, HIGH);
   digitalWrite(RELAY_3_PIN, LOW);
   //
-  display_Print1stLine("VENT: SPEED", 3);
+  display_Print1stLine("Vent", 3);
 }
 //==================================================================================================
 void actions_ACTION4() {

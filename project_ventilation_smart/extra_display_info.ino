@@ -4,6 +4,8 @@
 #define DISPLAY_STATUS_POS 15
 #define DISPLAY_I2C_ADDRESS 0x27
 
+#define BLANK_LINE "                                                                                "
+
 //= VARIABLES ======================================================================================
 LiquidCrystal_I2C lcd(DISPLAY_I2C_ADDRESS, 16, 2);
 byte progress = 0;                  // used to indicate progress on display
@@ -32,21 +34,20 @@ void display_Setup() {
 #endif
 
 //==================================================================================================
-void display_Print1stLine(unsigned long label, byte currentAction) {
-#ifdef UseDisplay
-  char buffer[7];
-  dtostrf(label, 7, 0, buffer);
-  display_Print1stLine(buffer, currentAction);
-#endif
-}
 void display_Print1stLine(const char* label, byte currentAction) {
 #ifdef UseDisplay
+  char buffer[80];
+  sprintf(buffer, "%s: %d", label, currentAction);
+  display_Print1stLine(buffer);
+#endif
+}
+//==================================================================================================
+void display_Print1stLine(const char* label) {
+#ifdef UseDisplay
   lcd.home();
-  lcd.print("_______:        ");
+  lcd.print(BLANK_LINE);
   lcd.home();
   lcd.print(label);
-  lcd.print(": ");
-  lcd.print(currentAction);
 #endif
 }
 //==================================================================================================

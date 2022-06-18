@@ -11,7 +11,6 @@ void printRxToSerial(unsigned long decimal, unsigned int length, unsigned int de
   const char* b = dec2binWzerofill(decimal, length);
 
   char buffer[200];
-
   sprintf(buffer, "Decimal: %d (%dBit) Binary: %d Tri-State: %d PulseLength: %d microseconds Protocol: %d",
           decimal, length, b, bin2tristate(b), delay, protocol);
   Serial.println(buffer);

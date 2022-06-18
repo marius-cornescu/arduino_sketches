@@ -1,6 +1,6 @@
 /*
 
-Sets the time from input and prints back time stamps for 5 seconds
+  Sets the time from input and prints back time stamps for 5 seconds
 
 
 
@@ -31,18 +31,15 @@ bool century = false;
 bool h12Flag;
 bool pmFlag;
 
-byte lastState = LOW;  // the previous state from the input pin
-byte currentState;      // the current reading from the input pin
-
 #if defined(ESP8266)
-  ICACHE_RAM_ATTR void buttonWasPressed();
+ICACHE_RAM_ATTR void buttonWasPressed();
 #endif
 
 //==================================================================================================
 /***************************************************
- * Setup
- *  - Open Serial and Wire connection
- *  - Explain to the user how to use the program
+   Setup
+    - Open Serial and Wire connection
+    - Explain to the user how to use the program
 ***************************************************/
 //**************************************************************************************************
 void setup() {
@@ -72,10 +69,10 @@ void setup() {
 //**************************************************************************************************
 //==================================================================================================
 /***************************************************
- * Loop
- *  - Each time we receive the time correction on the Serial
- *  - Set the rtcClock of the DS3231
- *  - Echo the value from the DS3231 during 5 seconds
+   Loop
+    - Each time we receive the time correction on the Serial
+    - Set the rtcClock of the DS3231
+    - Echo the value from the DS3231 during 5 seconds
 ***************************************************/
 void loop() {
   for (uint8_t i = 0; i < 5; i++) {
@@ -125,9 +122,9 @@ void loop() {
 }
 //==================================================================================================
 /***************************************************
- * inputDateFromSerial
- *  - Read and interpret the data from the Serial input
- *  - Store the data in global variables
+   inputDateFromSerial
+    - Read and interpret the data from the Serial input
+    - Store the data in global variables
 ***************************************************/
 void inputDateFromSerial() {
   // Call this if you notice something coming in on
@@ -212,17 +209,9 @@ void printTheTime() {
 //==================================================================================================
 void buttonWasPressed() {
   Serial.println("#");
-  
-  // read the state of the switch/button:
-  currentState = digitalRead(BUTTON_PIN);
 
-  if (lastState == LOW && currentState == HIGH) {
-    setAlarm1();
-    Serial.println("State changed from LOW to HIGH");
-  }
-
-  // save the last state
-  lastState = currentState;
+  setAlarm1();
+  Serial.println("ALARM 1 set");
 }
 //==================================================================================================
 void setAlarm1() {

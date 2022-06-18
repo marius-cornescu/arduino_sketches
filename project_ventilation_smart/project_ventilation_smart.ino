@@ -6,7 +6,7 @@
     VCC  --> 5V
     DATA --> D2
   -------------------------------
-  DISPLAY
+  DISPLAY - I2C
     SDA is the serial data
     SCL is the serial clock
 
@@ -14,6 +14,16 @@
     VCC --> 5V
     SDA --> A4
     SCL --> A5
+  -------------------------------
+  DISPLAY - I2C
+    SDA is the serial data
+    SCL is the serial clock
+      
+  -------------------------------
+  RTC-DS3231 - I2C
+    SDA is the serial data
+    SCL is the serial clock
+      
   -------------------------------
   RELAY
     D5  --> Relay1
@@ -28,19 +38,24 @@
 #define UseDisplay      // Log information and actions to the Display // uses 18% of memory
 //#define RfLogsToSerial  // Print RF messages to Serial Terminal       // uses 9% of memory
 //#define I2CLogsToSerial  // Print I2C messages to Serial Terminal       // uses ??% of memory
-//#define UseRealTimeClock  //
+#define UseRealTimeClock  // Use the RTC
 
 //= INCLUDES =======================================================================================
 #if defined(DEBUG) || defined(RfLogsToSerial) || defined(I2CLogsToSerial)
 #include <stdio.h> // for function sprintf
 #endif
 
+#include "Remotes.h"
 #include <Wire.h>   // using I2C
 #include "PCF8575.h"
 #include <RCSwitch.h>
 
 #ifdef UseDisplay
 #include <LiquidCrystal_I2C.h>
+#endif
+
+#ifdef UseRealTimeClock
+#include <DS3231.h>
 #endif
 
 //= CONSTANTS ======================================================================================
@@ -67,17 +82,17 @@ const unsigned int RF_TARGET_BIT_COUNT = 24;
    TELECOMANDA 4 butoane (ABCD) => B
    TELECOMANDA 3 butoane (123)  => C
 */
-const unsigned int BUTTON_1_SIZE = 3;
-const unsigned int BUTTON_2_SIZE = 3;
-const unsigned int BUTTON_3_SIZE = 3;
+const unsigned int ACTION_1_BUTTONS_SIZE = 3;
+const unsigned int ACTION_2_BUTTONS_SIZE = 3;
+const unsigned int ACTION_3_BUTTONS_SIZE = 3;
 
-const unsigned int BUTTON_4_SIZE = 1;
+const unsigned int ACTION_4_BUTTONS_SIZE = 1;
 
-const unsigned long BUTTON_1[BUTTON_1_SIZE] = {/*A*/9094708, /*B*/6145640, /*C*/9468385};
-const unsigned long BUTTON_2[BUTTON_2_SIZE] = {/*A*/9094705, /*B*/6145636, /*C*/9468386};
-const unsigned long BUTTON_3[BUTTON_3_SIZE] = {/*A*/9094706, /*B*/6145634, /*C*/9468388};
+const unsigned long ACTION_1_BUTTONS[ACTION_1_BUTTONS_SIZE] = {Remote1.button1, Remote2.button1, Remote3.button1};
+const unsigned long ACTION_2_BUTTONS[ACTION_2_BUTTONS_SIZE] = {Remote1.b2, Remote2.b2, Remote3.b2};
+const unsigned long ACTION_3_BUTTONS[ACTION_3_BUTTONS_SIZE] = {Remote1.b3, Remote2.b3, Remote3.b3};
 
-const unsigned long BUTTON_4[BUTTON_4_SIZE] = {/*B*/6145633};
+const unsigned long ACTION_4_BUTTONS[ACTION_4_BUTTONS_SIZE] = {Remote3.b4};
 
 //------------------------------------------------
 const byte ACTION_MAX_VALID = 90; // any action with higher value will be ignored
@@ -144,7 +159,7 @@ void loop() {
         if (currentAction != previousAction) {
           display_Print1stLine("ACTION", currentAction);
 
-          actions_ProcessAction(previousAction, currentAction);
+          actions_ProcessAction(currentAction);
 
           previousAction = currentAction;
         }
@@ -157,6 +172,8 @@ void loop() {
   //
   } else {
     // GETS EXECUTED CONTINUOUSLY WHEN NO MESSAGE
+    clock_TriggerIfAlarm();
+    //
     menu_ActIfActivity();
     delay(TIME_TICK * 10);
     //

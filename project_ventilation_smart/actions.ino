@@ -1,3 +1,7 @@
+//= CONSTANTS ======================================================================================
+#define ACTION4_DELAY 5
+
+//= VARIABLES ======================================================================================
 
 //==================================================================================================
 void actions_SetupInitialState() {
@@ -19,26 +23,26 @@ void actions_SetStateToDefault() {
 }
 //==================================================================================================
 byte actions_ComputeActionForButton(unsigned long buttonId) {
-  for (byte i = 0; i < BUTTON_1_SIZE; i = i + 1) {
-    if (BUTTON_1[i] == buttonId) {
+  for (byte i = 0; i < ACTION_1_BUTTONS_SIZE; i = i + 1) {
+    if (ACTION_1_BUTTONS[i] == buttonId) {
       return ACTION_1;
     }
   }
 
-  for (byte i = 0; i < BUTTON_2_SIZE; i = i + 1) {
-    if (BUTTON_2[i] == buttonId) {
+  for (byte i = 0; i < ACTION_2_BUTTONS_SIZE; i = i + 1) {
+    if (ACTION_2_BUTTONS[i] == buttonId) {
       return ACTION_2;
     }
   }
 
-  for (byte i = 0; i < BUTTON_3_SIZE; i = i + 1) {
-    if (BUTTON_3[i] == buttonId) {
+  for (byte i = 0; i < ACTION_3_BUTTONS_SIZE; i = i + 1) {
+    if (ACTION_3_BUTTONS[i] == buttonId) {
       return ACTION_3;
     }
   }
 
-  for (byte i = 0; i < BUTTON_4_SIZE; i = i + 1) {
-    if (BUTTON_4[i] == buttonId) {
+  for (byte i = 0; i < ACTION_4_BUTTONS_SIZE; i = i + 1) {
+    if (ACTION_4_BUTTONS[i] == buttonId) {
       return ACTION_4;
     }
   }
@@ -46,7 +50,7 @@ byte actions_ComputeActionForButton(unsigned long buttonId) {
   return ACTION_NOP;
 }
 //==================================================================================================
-void actions_ProcessAction(byte previousAction, byte currentAction) {
+void actions_ProcessAction(byte currentAction) {
   switch (currentAction) {
     //-------------------------------------------
     case ACTION_1:
@@ -104,10 +108,8 @@ void actions_ACTION3() {
 //==================================================================================================
 void actions_ACTION4() {
   //
-  //digitalWrite(RELAY_1_PIN, HIGH);
-  //digitalWrite(RELAY_2_PIN, HIGH);
-  //digitalWrite(RELAY_3_PIN, HIGH);
+  actions_ACTION3();
+  clock_Alarm1_SetInMinutesWithAction(ACTION4_DELAY, ACTION_1);
   //
-  display_Print1stLine("TBD", 0);
 }
 //==================================================================================================

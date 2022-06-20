@@ -10,6 +10,10 @@
  * SCL --> A5  blue
  * 
  */
+//= DEFINES ========================================================================================
+#define BLANK_LINE "                                        "
+#define TEST_LINE  "***************#123456789012345678901234"
+
 //= INCLUDE ========================================================================================
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -78,15 +82,18 @@ void setupDisplay() {
   lcd.clear();         // clear the screen
   lcd.home();          // set the cursor to position 0, line 1
   // Numbers are stored but not displayed
-  lcd.print("***************#123456789012345678901234***************#123456789012345678901234");  // write on the screen
+  lcd.print(TEST_LINE);
+  lcd.setCursor(0, 1);
+  lcd.print(TEST_LINE);
+  //
   lcd.home();
   delay(100);
   //-------------------
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("$$$$$$$$$$$$$$$#12345678901234567890123#");
+  lcd.print(TEST_LINE);
   lcd.setCursor(0, 1);
-  lcd.print("$$$$$$$$$$$$$$$#12345678901234567890123#");
+  lcd.print(TEST_LINE);
   lcd.home();
   delay(100);
   //-------------------------------------------------

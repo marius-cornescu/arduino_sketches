@@ -7,6 +7,14 @@
 */
 
 //= DEFINES ========================================================================================
+#if defined(ESP8266)
+  // interrupt handler and related code must be in RAM on ESP8266,
+  // according to issue #46.
+  #define RECEIVE_ATTR ICACHE_RAM_ATTR
+  #define VAR_ISR_ATTR
+  #define HIGH 0x0
+  #define LOW  0x1
+#endif
 
 //= INCLUDES =======================================================================================
 

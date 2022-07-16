@@ -7,45 +7,29 @@
 */
 
 //= DEFINES ========================================================================================
-
-//= INCLUDES =======================================================================================
-
-
-//= CONSTANTS ======================================================================================
-
-
-//= VARIABLES ======================================================================================
-
-
-//==================================================================================================
-
-//==================================================================================================
-// Template ID, Device Name and Auth Token are provided by the Blynk.Cloud
-// See the Device Info tab, or Template settings
-#define BLYNK_TEMPLATE_ID "TMPLbd69Q8M8"
-#define BLYNK_DEVICE_NAME "Quickstart Template"
-#define BLYNK_AUTH_TOKEN "czTd10GWtBcf_q8FH6oY_EfSNY37c6vA"
-
-
 // Comment this out to disable prints and save space
 #define BLYNK_PRINT Serial
-
-
-#include <ESP8266_Lib.h>
-#include <BlynkSimpleShieldEsp8266.h>
-
-char auth[] = BLYNK_AUTH_TOKEN;
-
-// Your WiFi credentials.
-// Set password to "" for open networks.
-char ssid[] = "";
-char pass[] = "";
 
 // Your ESP8266 baud rate:
 #define ESP8266_BAUD 115200
 
-//ESP8266 wifi(&EspSerial);
+//= INCLUDES =======================================================================================
+#include "Secrets.h"
+
+#include <ESP8266_Lib.h>
+#include <BlynkSimpleShieldEsp8266.h>
+
+//= CONSTANTS ======================================================================================
+const char auth[] = BLYNK_AUTH_TOKEN;
+
+// Your WiFi credentials.
+// Set password to "" for open networks.
+const char ssid[] = WIFI_SSID;
+const char pass[] = WIFI_PASSWORD;
+
+//= VARIABLES ======================================================================================
 ESP8266 wifi(&Serial);
+
 //==================================================================================================
 //**************************************************************************************************
 void setup()

@@ -7,50 +7,41 @@
 */
 
 //= DEFINES ========================================================================================
-#if defined(ESP8266)
-  // interrupt handler and related code must be in RAM on ESP8266, according to issue #46.
-  #define RECEIVE_ATTR ICACHE_RAM_ATTR
-  #define VAR_ISR_ATTR
-  #define HIGH 0x0
-  #define LOW  0x1
-  #define LED_BUILTIN  1
-#endif
-//
-#define DEBUG
+#define ESP8266_BUILTIN_LED 1 // LOW is on and HIGH is off for blue led
+#define ESP8266_GPIO0 0        // HIGH is 3.3V
+#define ESP8266_GPIO2 2        // HIGH is 3.3V 
 
 //= INCLUDES =======================================================================================
 
 
 
 //= CONSTANTS ======================================================================================
-const int LED_INDICATOR_PIN = LED_BUILTIN;  // choose the pin for the LED
+const int LED_INDICATOR_PIN = ESP8266_GPIO0;
+const int D_PIN = ESP8266_GPIO2;
 
 
 //= VARIABLES ======================================================================================
-volatile int ledState = HIGH;
 
 
 //==================================================================================================
 //**************************************************************************************************
 void setup() {
-#ifdef DEBUG
   // Open serial communications and wait for port to open:
   Serial.begin(115200);
-  Serial.println("START-UP");
-#endif
-  // initialize digital pin LED_INDICATOR_PIN as an output.
-  pinMode(LED_INDICATOR_PIN, OUTPUT);
+  //
+  pinMode(ESP8266_GPIO0, OUTPUT);
+  //
+  pinMode(ESP8266_GPIO2, OUTPUT);
 }
 //**************************************************************************************************
 //==================================================================================================
 void loop() {
-  // put your main code here, to run repeatedly
-  ledState = HIGH;
-  digitalWrite(LED_INDICATOR_PIN, ledState);
+  digitalWrite(ESP8266_GPIO0, HIGH);
+  digitalWrite(ESP8266_GPIO2, LOW);
   delay(1000);
 
-  ledState = LOW;
-  digitalWrite(LED_INDICATOR_PIN, ledState);
+  digitalWrite(ESP8266_GPIO0, LOW);
+  digitalWrite(ESP8266_GPIO2, HIGH);
   delay(4000);
 }
 //==================================================================================================

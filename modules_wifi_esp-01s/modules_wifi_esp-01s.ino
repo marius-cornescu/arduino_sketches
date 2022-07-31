@@ -79,8 +79,10 @@ void setup()
   // Set ESP8266 baud rate
   //EspSerial.begin(ESP8266_BAUD);
   Serial.begin(ESP8266_BAUD);
-  delay(10);
-
+  while (!Serial) {
+    ; // wait for serial port to connect. Needed for native USB port only
+  }
+  
   Blynk.begin(auth, wifi, ssid, pass);
   // You can also specify server:
   //Blynk.begin(auth, wifi, ssid, pass, "blynk.cloud", 80);
